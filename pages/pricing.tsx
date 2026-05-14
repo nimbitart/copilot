@@ -131,7 +131,9 @@ export default function Pricing() {
               Start Free Trial
             </a>
             <p style={{ textAlign: 'center', fontSize: '12px', color: '#666', marginTop: '15px' }}>
-              No credit card required
+  Cancel anytime - No long-term commitment
+</p>
+              Cancel anytime
             </p>
           </div>
 
