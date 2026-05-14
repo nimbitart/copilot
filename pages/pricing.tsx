@@ -30,19 +30,19 @@ export default function Pricing() {
           </ul>
           <a 
             href="https://buy.stripe.com/test_aFacN4arj7vM76ua8v5gc00"
-            style={{ 
-              padding: '10px 20px', 
-              fontSize: '16px', 
-              backgroundColor: '#007bff', 
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              textDecoration: 'none',
-              display: 'inline-block'
-            }}
-          >
-            Upgrade to Pro
+	<button style={{
+  		padding: '15px 40px',
+  		fontSize: '18px',
+  		backgroundColor: '#007bff',  // Add color!
+  		color: 'white',
+ 	        border: 'none',
+                borderRadius: '8px',  // Rounded corners
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                boxShadow: '0 4px 6px rgba(0,123,255,0.3)'  // Add shadow!
+}}>
+  Upgrade to Pro
+</button>
           </a>
         </div>
       </div>
