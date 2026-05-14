@@ -241,6 +241,7 @@ export default function Pricing() {
           Get Started
        </a>
      </section>
+     </section>
       {/* Footer */}
       <footer style={{ 
         backgroundColor: '#333', 
