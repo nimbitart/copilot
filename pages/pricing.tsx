@@ -42,7 +42,6 @@ export default function Pricing() {
                 boxShadow: '0 4px 6px rgba(0,123,255,0.3)'  // Add shadow!
 }}>
   Upgrade to Pro
-</button>
           </a>
         </div>
       </div>
