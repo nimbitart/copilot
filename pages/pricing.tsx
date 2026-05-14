@@ -239,10 +239,8 @@ export default function Pricing() {
           display: 'inline-block'
         }}>
           Get Started
-        </a>
-      </section>
-      
-      <section
+       </a>
+
       {/* Footer */}
       <footer style={{ 
         backgroundColor: '#333', 
