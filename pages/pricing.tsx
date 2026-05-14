@@ -29,20 +29,21 @@ export default function Pricing() {
             <li>✅ Priority support</li>
           </ul>
           <a 
-            href="https://buy.stripe.com/test_aFacN4arj7vM76ua8v5gc00"
-	<button style={{
-  		padding: '15px 40px',
-  		fontSize: '18px',
-  		backgroundColor: '#007bff',  // Add color!
-  		color: 'white',
- 	        border: 'none',
-                borderRadius: '8px',  // Rounded corners
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                boxShadow: '0 4px 6px rgba(0,123,255,0.3)'  // Add shadow!
-}}>
+  href="https://buy.stripe.com/test_aFacN4arj7vM76ua8v5gc00"
+  style={{
+    padding: '15px 40px',
+    fontSize: '16px',
+    backgroundColor: '#007bff',
+    color: 'white',
+    textDecoration: 'none',
+    borderRadius: '5px',
+    fontWeight: 'bold',
+    display: 'inline-block'
+  }}
+>
   Upgrade to Pro
-          </a>
+</a>
+  		
         </div>
       </div>
     </div>
