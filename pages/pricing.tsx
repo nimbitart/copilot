@@ -16,7 +16,7 @@ export default function Pricing() {
         </p>
       </header>
 
-      {/* Pricing Cards */}
+      {/* Pricing Cards Section */}
       <section style={{ 
         padding: '60px 20px', 
         maxWidth: '1200px', 
@@ -131,9 +131,7 @@ export default function Pricing() {
               Start Free Trial
             </a>
             <p style={{ textAlign: 'center', fontSize: '12px', color: '#666', marginTop: '15px' }}>
-  Cancel anytime - No long-term commitment
-</p>
-              Cancel anytime
+              Cancel anytime - No long-term commitment
             </p>
           </div>
 
@@ -178,7 +176,7 @@ export default function Pricing() {
         </div>
       </section>
 
-      {/* FAQ */}
+      {/* FAQ Section */}
       <section style={{ 
         backgroundColor: '#f8f9fa', 
         padding: '60px 20px'
@@ -218,7 +216,7 @@ export default function Pricing() {
         </div>
       </section>
 
-      {/* CTA Footer */}
+      {/* CTA Section */}
       <section style={{ 
         backgroundColor: '#007bff', 
         color: 'white', 
@@ -239,9 +237,9 @@ export default function Pricing() {
           display: 'inline-block'
         }}>
           Get Started
-       </a>
-     </section>
-     <section
+        </a>
+      </section>
+
       {/* Footer */}
       <footer style={{ 
         backgroundColor: '#333', 
@@ -252,7 +250,6 @@ export default function Pricing() {
         <p style={{ margin: '0', opacity: 0.8 }}>
           © 2025 Code Review Copilot
         </p>
-      </section>
       </footer>
     </div>
   );
