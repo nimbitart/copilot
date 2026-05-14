@@ -29,7 +29,7 @@ export default function Pricing() {
             <li>✅ Priority support</li>
           </ul>
           <a 
-            href="https://buy.stripe.com/aFacN4arj7vM76ua8v5gc00"
+            href="https://buy.stripe.com/test_aFacN4arj7vM76ua8v5gc00"
             style={{ 
               padding: '10px 20px', 
               fontSize: '16px', 
