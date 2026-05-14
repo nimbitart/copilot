@@ -252,6 +252,7 @@ export default function Pricing() {
         <p style={{ margin: '0', opacity: 0.8 }}>
           © 2025 Code Review Copilot
         </p>
+      </section>
       </footer>
     </div>
   );
