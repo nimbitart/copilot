@@ -11,128 +11,85 @@ export default async function handler(
   try {
     const { action, pull_request } = req.body;
 
-    if (action !== 'opened' && action !== 'synchronize') {
-      return res.status(200).json({ message: 'ignored' });
+    if (!pull_request || (action !== 'opened' && action !== 'synchronize')) {
+      return res.status(200).json({ ok: true });
     }
-
-    if (!pull_request) return res.status(200).json({ message: 'no pr' });
 
     const owner = pull_request.base.repo.owner.login;
     const repo = pull_request.base.repo.name;
     const prNumber = pull_request.number;
-    const prTitle = pull_request.title;
-    const prBody = pull_request.body || '';
+    const title = pull_request.title;
+    const body = pull_request.body || '';
 
-    console.log(`Reviewing ${owner}/${repo}#${prNumber}`);
-
-    // Get code diff
+    // Get code
     let code = '';
     try {
-      const res = await fetch(pull_request.diff_url);
-      code = await res.text();
+      const r = await fetch(pull_request.diff_url);
+      code = await r.text();
+      if (code.length > 4000) code = code.slice(0, 4000);
     } catch (e) {
-      code = 'Could not fetch code';
+      code = 'Could not get code';
     }
 
-    // Limit code size
-    if (code.length > 3000) {
-      code = code.substring(0, 3000) + '\n... (truncated)';
-    }
+    // Call Claude - FORCE detailed response
+    const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.ANTHROPIC_API_KEY || '',
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-opus-4-6',
+        max_tokens: 3000,
+        messages: [{
+          role: 'user',
+          content: `DETAILED CODE REVIEW - Be THOROUGH and SPECIFIC.
 
-    // Get detailed review from Claude
-    let review = '';
-    try {
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': process.env.ANTHROPIC_API_KEY || '',
-          'anthropic-version': '2023-06-01',
-        },
-        body: JSON.stringify({
-          model: 'claude-opus-4-6',
-          max_tokens: 2500,
-          messages: [
-            {
-              role: 'user',
-              content: `You are Code Review Copilot. Provide a DETAILED code review for this GitHub PR.
+Title: ${title}
+Description: ${body}
 
-PR Title: ${prTitle}
-PR Description: ${prBody}
-
-Code to review:
+Code:
 \`\`\`
 ${code}
 \`\`\`
 
-Provide a THOROUGH review with:
+MUST INCLUDE:
+1. All security issues found (SQL injection, hardcoded secrets, etc)
+2. All performance issues (N+1, loops, memory, etc)
+3. All code quality issues (error handling, naming, validation, etc)
+4. Specific fixes for each issue
 
-**Security Issues:**
-- SQL injection vulnerabilities
-- Hardcoded secrets/credentials
-- Authentication/authorization problems
-- Input validation issues
+WRITE AT LEAST 5-10 PARAGRAPHS. Be detailed.`,
+        }],
+      }),
+    });
 
-**Performance Issues:**
-- N+1 query problems
-- Inefficient loops
-- Memory leaks
-- String concatenation in loops
+    const data = await claudeRes.json();
+    const review = data.content?.[0]?.text || 'Could not generate review';
 
-**Code Quality:**
-- Missing error handling
-- Bad naming
-- Complex functions
-- Missing validation
+    // Post comment
+    const fullComment = `## 🤖 Code Review Copilot\n\n${review}`;
 
-**Best Practices:**
-- Improvements needed
-- Specific fixes
-
-Be specific, detailed, and actionable. Include code examples where possible.`,
-            },
-          ],
-        }),
-      });
-
-      const data = await response.json();
-      if (data.content && data.content[0]) {
-        review = data.content[0].text;
-      } else {
-        review = 'Could not generate review';
+    const postRes = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/issues/${prNumber}/comments`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `token ${process.env.GITHUB_TOKEN}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ body: fullComment }),
       }
-    } catch (error) {
-      review = 'Error: ' + String(error);
+    );
+
+    if (postRes.ok) {
+      return res.status(200).json({ ok: true });
+    } else {
+      return res.status(500).json({ error: 'Failed to post' });
     }
-
-    // Post as comment (this will post as YOUR account, not the bot app)
-    const body = `## 🤖 Code Review Copilot\n\n${review}`;
-
-    try {
-      const commentRes = await fetch(
-        `https://api.github.com/repos/${owner}/${repo}/issues/${prNumber}/comments`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `token ${process.env.GITHUB_TOKEN}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ body }),
-        }
-      );
-
-      if (commentRes.ok) {
-        console.log('✅ Review posted');
-        return res.status(200).json({ ok: true });
-      } else {
-        return res.status(500).json({ error: 'Failed to post' });
-      }
-    } catch (error) {
-      return res.status(500).json({ error: String(error) });
-    }
-
   } catch (error) {
-    console.error('Error:', error);
+    console.error(error);
     return res.status(500).json({ error: String(error) });
   }
 }
