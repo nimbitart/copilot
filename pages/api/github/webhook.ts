@@ -4,6 +4,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  console.log('[Webhook] Received', req.method);
+  
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -11,27 +13,45 @@ export default async function handler(
   try {
     const { action, pull_request } = req.body;
 
-    if (!pull_request || (action !== 'opened' && action !== 'synchronize')) {
+    console.log('[Webhook] Action:', action);
+
+    if (!pull_request) {
+      console.log('[Webhook] No PR data');
+      return res.status(200).json({ ok: true });
+    }
+
+    if (action !== 'opened' && action !== 'synchronize') {
+      console.log('[Webhook] Ignoring action:', action);
       return res.status(200).json({ ok: true });
     }
 
     const owner = pull_request.base.repo.owner.login;
     const repo = pull_request.base.repo.name;
     const prNumber = pull_request.number;
-    const title = pull_request.title;
-    const body = pull_request.body || '';
+    const prTitle = pull_request.title || 'No title';
+    const prBody = pull_request.body || 'No description';
 
-    // Get code
+    console.log(`[Webhook] Processing ${owner}/${repo}#${prNumber}`);
+
+    // Get the code diff
     let code = '';
     try {
-      const r = await fetch(pull_request.diff_url);
-      code = await r.text();
-      if (code.length > 4000) code = code.slice(0, 4000);
+      console.log('[Webhook] Fetching diff...');
+      const diffUrl = pull_request.diff_url;
+      const diffRes = await fetch(diffUrl);
+      code = await diffRes.text();
+      console.log(`[Webhook] Got ${code.length} bytes of code`);
     } catch (e) {
-      code = 'Could not get code';
+      console.error('[Webhook] Error fetching diff:', e);
+      code = 'Could not fetch code';
     }
 
-    // Call Claude - FORCE detailed response
+    // Limit code size
+    const limitedCode = code.length > 4000 ? code.slice(0, 4000) : code;
+
+    // Call Claude API
+    console.log('[Webhook] Calling Claude API...');
+    
     const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -41,37 +61,52 @@ export default async function handler(
       },
       body: JSON.stringify({
         model: 'claude-opus-4-6',
-        max_tokens: 3000,
-        messages: [{
-          role: 'user',
-          content: `DETAILED CODE REVIEW - Be THOROUGH and SPECIFIC.
+        max_tokens: 3500,
+        messages: [
+          {
+            role: 'user',
+            content: `You are a professional code reviewer. Provide a DETAILED, THOROUGH code review.
 
-Title: ${title}
-Description: ${body}
+**PR Title:** ${prTitle}
 
-Code:
+**PR Description:** ${prBody}
+
+**Code to Review:**
 \`\`\`
-${code}
+${limitedCode}
 \`\`\`
 
-MUST INCLUDE:
-1. All security issues found (SQL injection, hardcoded secrets, etc)
-2. All performance issues (N+1, loops, memory, etc)
-3. All code quality issues (error handling, naming, validation, etc)
-4. Specific fixes for each issue
+PROVIDE A COMPREHENSIVE REVIEW INCLUDING:
 
-WRITE AT LEAST 5-10 PARAGRAPHS. Be detailed.`,
-        }],
+1. **Security Issues** - List every security vulnerability found
+2. **Performance Issues** - Identify N+1 queries, memory leaks, inefficient code
+3. **Code Quality** - Flag bad naming, missing error handling, complexity issues
+4. **Best Practices** - Suggest improvements and fixes
+
+Be SPECIFIC and DETAILED. Include code examples. Write at least 500 words.`,
+          },
+        ],
       }),
     });
 
-    const data = await claudeRes.json();
-    const review = data.content?.[0]?.text || 'Could not generate review';
+    console.log('[Webhook] Claude response:', claudeRes.status);
 
-    // Post comment
-    const fullComment = `## 🤖 Code Review Copilot\n\n${review}`;
+    const claudeData = await claudeRes.json();
+    
+    if (!claudeData.content || !claudeData.content[0]) {
+      console.error('[Webhook] No Claude response:', claudeData);
+      return res.status(500).json({ error: 'No Claude response' });
+    }
 
-    const postRes = await fetch(
+    const review = claudeData.content[0].text;
+    console.log('[Webhook] Got review:', review.length, 'chars');
+
+    // Post to GitHub
+    console.log('[Webhook] Posting to GitHub...');
+
+    const body = `## 🤖 Code Review Copilot\n\n${review}`;
+
+    const githubRes = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/issues/${prNumber}/comments`,
       {
         method: 'POST',
@@ -79,17 +114,23 @@ WRITE AT LEAST 5-10 PARAGRAPHS. Be detailed.`,
           'Authorization': `token ${process.env.GITHUB_TOKEN}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ body: fullComment }),
+        body: JSON.stringify({ body }),
       }
     );
 
-    if (postRes.ok) {
+    console.log('[Webhook] GitHub response:', githubRes.status);
+
+    if (githubRes.ok) {
+      console.log('[Webhook] ✅ SUCCESS');
       return res.status(200).json({ ok: true });
     } else {
-      return res.status(500).json({ error: 'Failed to post' });
+      const error = await githubRes.text();
+      console.error('[Webhook] GitHub error:', error);
+      return res.status(500).json({ error });
     }
+
   } catch (error) {
-    console.error(error);
+    console.error('[Webhook] ERROR:', error);
     return res.status(500).json({ error: String(error) });
   }
 }
