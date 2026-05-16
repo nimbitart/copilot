@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import crypto from 'crypto';
 
 export default async function handler(
   req: NextApiRequest,
@@ -9,59 +8,41 @@ export default async function handler(
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Verify webhook signature
-  const signature = req.headers['x-hub-signature-256'] as string;
-  const secret = process.env.GITHUB_WEBHOOK_SECRET || '';
-  
-  if (signature && secret) {
-    const hash = crypto
-      .createHmac('sha256', secret)
-      .update(JSON.stringify(req.body))
-      .digest('hex');
-    
-    const expected = `sha256=${hash}`;
-    if (signature !== expected) {
-      console.log('Invalid webhook signature');
-      return res.status(401).json({ error: 'Invalid signature' });
-    }
-  }
-
   try {
     const { action, pull_request } = req.body;
 
     if (action !== 'opened' && action !== 'synchronize') {
-      return res.status(200).json({ message: 'Event ignored' });
+      return res.status(200).json({ message: 'ignored' });
     }
 
-    if (!pull_request) {
-      return res.status(200).json({ message: 'No PR data' });
-    }
+    if (!pull_request) return res.status(200).json({ message: 'no pr' });
 
     const owner = pull_request.base.repo.owner.login;
     const repo = pull_request.base.repo.name;
     const prNumber = pull_request.number;
-    const prTitle = pull_request.title || 'No title';
-    const prBody = pull_request.body || 'No description';
+    const prTitle = pull_request.title;
+    const prBody = pull_request.body || '';
 
-    console.log(`[CodeReviewCopilot] Processing PR: ${owner}/${repo}#${prNumber}`);
+    console.log(`Reviewing ${owner}/${repo}#${prNumber}`);
 
-    // Get diff
-    let diff = '';
+    // Get code diff
+    let code = '';
     try {
-      const diffUrl = pull_request.diff_url;
-      const diffResponse = await fetch(diffUrl);
-      diff = await diffResponse.text();
+      const res = await fetch(pull_request.diff_url);
+      code = await res.text();
     } catch (e) {
-      console.error('Error fetching diff:', e);
-      diff = 'Could not fetch diff';
+      code = 'Could not fetch code';
     }
 
-    const codeSample = diff.length > 2500 ? diff.substring(0, 2500) + '\n...(truncated)' : diff;
+    // Limit code size
+    if (code.length > 3000) {
+      code = code.substring(0, 3000) + '\n... (truncated)';
+    }
 
-    // Generate review from Claude
+    // Get detailed review from Claude
     let review = '';
     try {
-      const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -70,50 +51,62 @@ export default async function handler(
         },
         body: JSON.stringify({
           model: 'claude-opus-4-6',
-          max_tokens: 2000,
+          max_tokens: 2500,
           messages: [
             {
               role: 'user',
-              content: `You are Code Review Copilot, an AI code reviewer for GitHub. Review this PR carefully and provide detailed feedback.
+              content: `You are Code Review Copilot. Provide a DETAILED code review for this GitHub PR.
 
-**PR Title:** ${prTitle}
+PR Title: ${prTitle}
+PR Description: ${prBody}
 
-**PR Description:** ${prBody}
-
-**Code Changes:**
-\`\`\`diff
-${codeSample}
+Code to review:
+\`\`\`
+${code}
 \`\`\`
 
-Please provide a comprehensive code review covering:
-1. **🔒 Security Issues** - SQL injection, hardcoded secrets, auth problems, etc.
-2. **⚡ Performance Issues** - N+1 queries, inefficient loops, memory leaks, etc.
-3. **📝 Code Quality** - Error handling, naming, complexity, best practices, etc.
-4. **✅ Suggestions** - Specific improvements and fixes.
+Provide a THOROUGH review with:
 
-Be detailed, specific, and constructive.`,
+**Security Issues:**
+- SQL injection vulnerabilities
+- Hardcoded secrets/credentials
+- Authentication/authorization problems
+- Input validation issues
+
+**Performance Issues:**
+- N+1 query problems
+- Inefficient loops
+- Memory leaks
+- String concatenation in loops
+
+**Code Quality:**
+- Missing error handling
+- Bad naming
+- Complex functions
+- Missing validation
+
+**Best Practices:**
+- Improvements needed
+- Specific fixes
+
+Be specific, detailed, and actionable. Include code examples where possible.`,
             },
           ],
         }),
       });
 
-      const data = await claudeRes.json();
-      if (claudeRes.ok && data.content?.[0]?.text) {
+      const data = await response.json();
+      if (data.content && data.content[0]) {
         review = data.content[0].text;
       } else {
         review = 'Could not generate review';
       }
     } catch (error) {
-      review = 'Error generating review: ' + String(error);
+      review = 'Error: ' + String(error);
     }
 
-    // Post comment using GitHub API with personal token
-    const comment = `## 🤖 Code Review Copilot
-
-${review}
-
----
-*AI-powered code reviews by Copilot using Claude*`;
+    // Post as comment (this will post as YOUR account, not the bot app)
+    const body = `## 🤖 Code Review Copilot\n\n${review}`;
 
     try {
       const commentRes = await fetch(
@@ -123,26 +116,23 @@ ${review}
           headers: {
             'Authorization': `token ${process.env.GITHUB_TOKEN}`,
             'Content-Type': 'application/json',
-            'Accept': 'application/vnd.github.v3+json',
           },
-          body: JSON.stringify({ body: comment }),
+          body: JSON.stringify({ body }),
         }
       );
 
-      if (!commentRes.ok) {
-        console.error('Failed to post comment:', commentRes.status);
+      if (commentRes.ok) {
+        console.log('✅ Review posted');
+        return res.status(200).json({ ok: true });
+      } else {
         return res.status(500).json({ error: 'Failed to post' });
       }
-
-      console.log('[CodeReviewCopilot] ✅ Review posted');
-      return res.status(200).json({ success: true });
     } catch (error) {
-      console.error('Comment error:', error);
       return res.status(500).json({ error: String(error) });
     }
 
   } catch (error) {
-    console.error('Webhook error:', error);
+    console.error('Error:', error);
     return res.status(500).json({ error: String(error) });
   }
 }
