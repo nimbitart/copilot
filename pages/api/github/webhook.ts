@@ -11,7 +11,6 @@ export default async function handler(
   try {
     const { action, pull_request } = req.body;
 
-    // Only process opened/synchronize PRs
     if (action !== 'opened' && action !== 'synchronize') {
       return res.status(200).json({ message: 'Event ignored' });
     }
@@ -54,13 +53,13 @@ export default async function handler(
     const claudeData = await claudeResponse.json();
     const review = claudeData.content[0]?.text || 'Unable to generate review';
 
-    // Post comment to PR
+    // Post comment to PR - FIXED: Use 'token' not 'Bearer'
     const commentResponse = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/issues/${prNumber}/comments`,
       {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${process.env.GITHUB_TOKEN || ''}`,
+          Authorization: `token ${process.env.GITHUB_TOKEN || ''}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
