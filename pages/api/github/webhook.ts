@@ -11,6 +11,7 @@ export default async function handler(
   try {
     const { action, pull_request } = req.body;
 
+    // Only process opened/synchronize events
     if (action !== 'opened' && action !== 'synchronize') {
       return res.status(200).json({ message: 'Event ignored' });
     }
@@ -22,32 +23,54 @@ export default async function handler(
     const owner = pull_request.base.repo.owner.login;
     const repo = pull_request.base.repo.name;
     const prNumber = pull_request.number;
-    const prTitle = pull_request.title;
-    const prBody = pull_request.body || '';
-    const diffUrl = pull_request.diff_url;
+    const prTitle = pull_request.title || 'No title';
+    const prBody = pull_request.body || 'No description';
 
-    console.log(`[Bot] Processing PR #${prNumber} in ${owner}/${repo}`);
+    console.log(`Processing PR: ${owner}/${repo}#${prNumber}`);
 
-    // Get PR diff
+    // Get the diff from the PR diff_url
     let diff = '';
     try {
+      const diffUrl = pull_request.diff_url;
       const diffResponse = await fetch(diffUrl);
       diff = await diffResponse.text();
-      console.log(`[Bot] Got diff: ${diff.length} bytes`);
-    } catch (error) {
-      console.error('[Bot] Failed to fetch diff:', error);
-      return res.status(500).json({ error: 'Failed to fetch diff' });
+      console.log(`Fetched diff: ${diff.length} chars`);
+    } catch (e) {
+      console.error('Error fetching diff:', e);
+      diff = 'Could not fetch code diff';
     }
 
-    // Truncate diff if too long
-    const truncatedDiff = diff.substring(0, 3000);
+    // Truncate if too large
+    const codeSample = diff.length > 2000 ? diff.substring(0, 2000) + '...' : diff;
 
-    // Call Claude API with better prompt
-    let review = '';
+    // Build the review prompt
+    const reviewPrompt = `You are an expert code reviewer for GitHub pull requests. Review the following PR and provide constructive feedback.
+
+**Pull Request Title:** ${prTitle}
+
+**Pull Request Description:**
+${prBody}
+
+**Code Changes (Diff):**
+\`\`\`
+${codeSample}
+\`\`\`
+
+Please provide a detailed code review that includes:
+
+1. **Security Issues** - Any vulnerabilities, SQL injection, hardcoded secrets, authentication problems, etc.
+2. **Performance Issues** - Inefficient loops, N+1 queries, unnecessary operations, memory leaks, etc.
+3. **Code Quality** - Missing error handling, unclear variable names, overly complex functions, bad practices, etc.
+4. **Suggestions** - Specific improvements and fixes the author should consider.
+
+Format your response with clear sections. Be specific with line numbers if possible. Be helpful and constructive.`;
+
+    // Call Claude API
+    let claudeReview = '';
     try {
-      console.log('[Bot] Calling Claude API...');
+      console.log('Calling Claude API...');
       
-      const claudeResponse = await fetch('https://api.anthropic.com/v1/messages', {
+      const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -56,65 +79,49 @@ export default async function handler(
         },
         body: JSON.stringify({
           model: 'claude-opus-4-6',
-          max_tokens: 1500,
+          max_tokens: 2000,
           messages: [
             {
               role: 'user',
-              content: `You are an expert code reviewer. Review this GitHub PR and provide detailed feedback.
-
-**PR Title:** ${prTitle}
-**PR Description:** ${prBody}
-
-**Code Changes:**
-\`\`\`
-${truncatedDiff}
-\`\`\`
-
-Please provide a thorough review covering:
-1. **Security Issues** (if any) - e.g., SQL injection, hardcoded secrets
-2. **Performance Issues** (if any) - e.g., N+1 queries, inefficient algorithms
-3. **Code Quality** (if any) - e.g., error handling, naming, complexity
-4. **Best Practices** (if any) - improvements or suggestions
-
-Format your response clearly with headers for each category. Be specific and actionable.`,
+              content: reviewPrompt,
             },
           ],
         }),
       });
 
-      const claudeData = await claudeResponse.json();
+      const claudeData = await claudeRes.json();
       
-      if (!claudeResponse.ok) {
-        console.error('[Bot] Claude API error:', claudeData);
-        review = '⚠️ Unable to generate review - Claude API error';
+      if (claudeRes.ok && claudeData.content && claudeData.content[0]) {
+        claudeReview = claudeData.content[0].text;
+        console.log('Got review from Claude');
       } else {
-        review = claudeData.content[0]?.text || '⚠️ Unable to generate review';
-        console.log('[Bot] Got review from Claude');
+        console.error('Claude error:', claudeData);
+        claudeReview = 'Could not generate review from Claude API';
       }
     } catch (error) {
-      console.error('[Bot] Claude API exception:', error);
-      review = '⚠️ Unable to generate review - error contacting Claude API';
+      console.error('Claude fetch error:', error);
+      claudeReview = 'Error contacting Claude API: ' + String(error);
     }
 
-    // Post comment to GitHub PR
-    try {
-      console.log('[Bot] Posting comment to GitHub...');
-      
-      const commentBody = `## 🤖 Code Review Copilot
+    // Post the review as a GitHub comment
+    const commentBody = `## 🤖 Code Review by Copilot
 
-${review}
+${claudeReview}
 
 ---
-*Generated by Code Review Copilot powered by Claude AI*`;
+*Powered by Claude AI • Code Review Copilot*`;
 
-      const commentResponse = await fetch(
+    try {
+      console.log('Posting comment to GitHub...');
+      
+      const githubRes = await fetch(
         `https://api.github.com/repos/${owner}/${repo}/issues/${prNumber}/comments`,
         {
           method: 'POST',
           headers: {
-            'Authorization': `token ${process.env.GITHUB_TOKEN || ''}`,
+            Authorization: `token ${process.env.GITHUB_TOKEN}`,
             'Content-Type': 'application/json',
-            'Accept': 'application/vnd.github.v3+json',
+            'User-Agent': 'CodeReviewCopilot',
           },
           body: JSON.stringify({
             body: commentBody,
@@ -122,20 +129,26 @@ ${review}
         }
       );
 
-      if (!commentResponse.ok) {
-        const errorData = await commentResponse.text();
-        console.error('[Bot] GitHub API error:', commentResponse.status, errorData);
-        return res.status(500).json({ error: 'Failed to post comment', details: errorData });
+      if (!githubRes.ok) {
+        const error = await githubRes.text();
+        console.error('GitHub error:', githubRes.status, error);
+        return res.status(500).json({ 
+          error: 'Failed to post GitHub comment',
+          status: githubRes.status,
+          details: error 
+        });
       }
 
-      console.log('[Bot] ✅ Review posted successfully');
-      return res.status(200).json({ message: 'Review posted successfully' });
+      console.log('✅ Comment posted successfully');
+      return res.status(200).json({ message: 'Review posted' });
+
     } catch (error) {
-      console.error('[Bot] Comment post exception:', error);
-      return res.status(500).json({ error: 'Failed to post comment', details: String(error) });
+      console.error('GitHub post error:', error);
+      return res.status(500).json({ error: 'Failed to post comment' });
     }
+
   } catch (error) {
-    console.error('[Bot] Webhook error:', error);
-    return res.status(500).json({ error: 'Internal server error', details: String(error) });
+    console.error('Webhook error:', error);
+    return res.status(500).json({ error: String(error) });
   }
 }
