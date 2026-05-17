@@ -1,9 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export default async function handler(req, res) {
   console.log('[Webhook] Received', req.method);
   
   if (req.method !== 'POST') {
