@@ -1,256 +1,274 @@
+import React from 'react';
+
 export default function Pricing() {
   return (
-    <div style={{ fontFamily: 'Arial, sans-serif' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb' }}>
       {/* Header */}
-      <header style={{ 
-        backgroundColor: '#007bff', 
-        color: 'white', 
-        padding: '60px 20px',
-        textAlign: 'center'
-      }}>
-        <h1 style={{ fontSize: '40px', margin: '0' }}>
-          Simple, Transparent Pricing
-        </h1>
-        <p style={{ fontSize: '18px', margin: '10px 0 0 0', opacity: 0.9 }}>
-          Choose the plan that fits your needs
-        </p>
-      </header>
+      <div style={{ backgroundColor: '#ffffff', borderBottom: '1px solid #e5e7eb', padding: '2rem 0' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }}>
+          <h1 style={{ fontSize: '2.25rem', fontWeight: 'bold', margin: '0 0 0.5rem', color: '#111827' }}>
+            Simple, Transparent Pricing
+          </h1>
+          <p style={{ fontSize: '1.125rem', color: '#6b7280', margin: 0 }}>
+            Choose the perfect plan for your team
+          </p>
+        </div>
+      </div>
 
-      {/* Pricing Cards Section */}
-      <section style={{ 
-        padding: '60px 20px', 
-        maxWidth: '1200px', 
-        margin: '0 auto'
-      }}>
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
-          gap: '40px',
-          marginTop: '40px'
-        }}>
+      {/* Pricing Cards */}
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '3rem 1rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', marginBottom: '4rem' }}>
+          
           {/* Free Plan */}
-          <div style={{ 
-            border: '2px solid #e0e0e0', 
-            padding: '40px', 
-            borderRadius: '8px',
-            backgroundColor: 'white',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+          <div style={{
+            backgroundColor: '#ffffff',
+            border: '1px solid #e5e7eb',
+            borderRadius: '0.75rem',
+            padding: '2rem',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
           }}>
-            <h2 style={{ fontSize: '28px', color: '#333', marginTop: '0' }}>Free</h2>
-            <p style={{ fontSize: '14px', color: '#666' }}>Perfect for getting started</p>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '600', margin: '0 0 0.5rem', color: '#111827' }}>
+              Free
+            </h2>
+            <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: '0 0 1.5rem' }}>
+              Perfect to start
+            </p>
             
-            <div style={{ margin: '30px 0' }}>
-              <span style={{ fontSize: '36px', fontWeight: 'bold', color: '#333' }}>$0</span>
-              <span style={{ fontSize: '16px', color: '#666' }}>/month</span>
+            <div style={{ margin: '1.5rem 0', paddingBottom: '1.5rem', borderBottom: '1px solid #e5e7eb' }}>
+              <span style={{ fontSize: '2rem', fontWeight: '600', color: '#111827' }}>$0</span>
+              <span style={{ fontSize: '0.875rem', color: '#6b7280' }}>/month</span>
             </div>
 
-            <ul style={{ listStyle: 'none', padding: '0', color: '#666' }}>
-              <li style={{ padding: '12px 0', borderBottom: '1px solid #eee' }}>✅ 5 reviews/month</li>
-              <li style={{ padding: '12px 0', borderBottom: '1px solid #eee' }}>✅ Basic feedback</li>
-              <li style={{ padding: '12px 0', borderBottom: '1px solid #eee' }}>✅ Community support</li>
-              <li style={{ padding: '12px 0', color: '#ccc' }}>❌ Unlimited reviews</li>
-              <li style={{ padding: '12px 0', color: '#ccc' }}>❌ Priority support</li>
+            <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 1.5rem', fontSize: '0.875rem' }}>
+              <li style={{ padding: '0.5rem 0', color: '#374151' }}>✓ 10 reviews/month</li>
+              <li style={{ padding: '0.5rem 0', color: '#374151' }}>✓ Security checks</li>
+              <li style={{ padding: '0.5rem 0', color: '#374151' }}>✓ Email support</li>
+              <li style={{ padding: '0.5rem 0', color: '#9ca3af' }}>✗ Team collaboration</li>
+              <li style={{ padding: '0.5rem 0', color: '#9ca3af' }}>✗ Priority support</li>
             </ul>
 
             <button style={{
               width: '100%',
-              padding: '12px',
-              marginTop: '30px',
-              backgroundColor: '#f0f0f0',
-              color: '#333',
-              border: 'none',
-              borderRadius: '4px',
-              fontSize: '16px',
-              fontWeight: 'bold',
-              cursor: 'not-allowed',
-              opacity: 0.6
-            }} disabled>
-              Current Plan
+              padding: '0.75rem 1rem',
+              backgroundColor: 'transparent',
+              border: '1px solid #d1d5db',
+              borderRadius: '0.375rem',
+              color: '#111827',
+              fontSize: '0.875rem',
+              fontWeight: '500',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }} onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'} onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}>
+              Get Started
             </button>
           </div>
 
-          {/* Pro Plan - FEATURED */}
-          <div style={{ 
-            border: '3px solid #007bff', 
-            padding: '40px', 
-            borderRadius: '8px',
-            backgroundColor: '#f0f8ff',
-            position: 'relative',
-            transform: 'scale(1.05)',
-            boxShadow: '0 10px 30px rgba(0, 123, 255, 0.2)'
+          {/* Pro Plan (Featured) */}
+          <div style={{
+            backgroundColor: '#ffffff',
+            border: '2px solid #6366f1',
+            borderRadius: '0.75rem',
+            padding: '2rem',
+            boxShadow: '0 4px 12px rgba(99, 102, 241, 0.15)',
+            position: 'relative'
           }}>
             <div style={{
               position: 'absolute',
-              top: '-15px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              backgroundColor: '#007bff',
-              color: 'white',
-              padding: '5px 15px',
-              borderRadius: '20px',
-              fontSize: '12px',
-              fontWeight: 'bold'
+              top: '-12px',
+              left: '1.5rem',
+              backgroundColor: '#6366f1',
+              color: '#ffffff',
+              fontSize: '0.75rem',
+              padding: '0.25rem 0.75rem',
+              borderRadius: '0.25rem',
+              fontWeight: '500'
             }}>
-              ⭐ MOST POPULAR
+              Most Popular
             </div>
 
-            <h2 style={{ fontSize: '28px', color: '#333', marginTop: '20px' }}>Pro</h2>
-            <p style={{ fontSize: '14px', color: '#666' }}>For serious developers</p>
-            
-            <div style={{ margin: '30px 0' }}>
-              <span style={{ fontSize: '36px', fontWeight: 'bold', color: '#007bff' }}>$49</span>
-              <span style={{ fontSize: '16px', color: '#666' }}>/month</span>
-            </div>
-
-            <ul style={{ listStyle: 'none', padding: '0', color: '#333' }}>
-              <li style={{ padding: '12px 0', borderBottom: '1px solid #e0e0e0', fontWeight: 'bold' }}>✅ Unlimited reviews</li>
-              <li style={{ padding: '12px 0', borderBottom: '1px solid #e0e0e0', fontWeight: 'bold' }}>✅ Advanced feedback</li>
-              <li style={{ padding: '12px 0', borderBottom: '1px solid #e0e0e0', fontWeight: 'bold' }}>✅ Security focus</li>
-              <li style={{ padding: '12px 0', borderBottom: '1px solid #e0e0e0', fontWeight: 'bold' }}>✅ Priority support</li>
-              <li style={{ padding: '12px 0', fontWeight: 'bold' }}>✅ Custom rules</li>
-            </ul>
-
-            <a 
-              href="https://buy.stripe.com/test_aFacN4arj7vM76ua8v5gc00"
-              style={{
-                width: '100%',
-                padding: '12px',
-                marginTop: '30px',
-                backgroundColor: '#007bff',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                fontSize: '16px',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                textAlign: 'center',
-                display: 'block',
-                textDecoration: 'none'
-              }}
-            >
-              Start Free Trial
-            </a>
-            <p style={{ textAlign: 'center', fontSize: '12px', color: '#666', marginTop: '15px' }}>
-              Cancel anytime - No long-term commitment
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '600', margin: '0 0 0.5rem', color: '#111827' }}>
+              Pro
+            </h2>
+            <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: '0 0 1.5rem' }}>
+              Best for teams
             </p>
-          </div>
 
-          {/* Enterprise Plan */}
-          <div style={{ 
-            border: '2px solid #e0e0e0', 
-            padding: '40px', 
-            borderRadius: '8px',
-            backgroundColor: 'white',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
-          }}>
-            <h2 style={{ fontSize: '28px', color: '#333', marginTop: '0' }}>Enterprise</h2>
-            <p style={{ fontSize: '14px', color: '#666' }}>For large teams</p>
-            
-            <div style={{ margin: '30px 0' }}>
-              <span style={{ fontSize: '24px', fontWeight: 'bold', color: '#333' }}>Custom</span>
+            <div style={{ margin: '1.5rem 0', paddingBottom: '1.5rem', borderBottom: '1px solid #e5e7eb' }}>
+              <span style={{ fontSize: '2rem', fontWeight: '600', color: '#111827' }}>$49</span>
+              <span style={{ fontSize: '0.875rem', color: '#6b7280' }}>/month</span>
             </div>
 
-            <ul style={{ listStyle: 'none', padding: '0', color: '#666' }}>
-              <li style={{ padding: '12px 0', borderBottom: '1px solid #eee' }}>✅ Unlimited everything</li>
-              <li style={{ padding: '12px 0', borderBottom: '1px solid #eee' }}>✅ Custom integration</li>
-              <li style={{ padding: '12px 0', borderBottom: '1px solid #eee' }}>✅ Dedicated support</li>
-              <li style={{ padding: '12px 0', borderBottom: '1px solid #eee' }}>✅ SLA guarantee</li>
-              <li style={{ padding: '12px 0' }}>✅ Team training</li>
+            <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 1.5rem', fontSize: '0.875rem' }}>
+              <li style={{ padding: '0.5rem 0', color: '#374151' }}>✓ Unlimited reviews</li>
+              <li style={{ padding: '0.5rem 0', color: '#374151' }}>✓ Advanced security analysis</li>
+              <li style={{ padding: '0.5rem 0', color: '#374151' }}>✓ Team collaboration</li>
+              <li style={{ padding: '0.5rem 0', color: '#374151' }}>✓ Priority support</li>
+              <li style={{ padding: '0.5rem 0', color: '#374151' }}>✓ Custom rules</li>
             </ul>
 
             <button style={{
               width: '100%',
-              padding: '12px',
-              marginTop: '30px',
-              backgroundColor: '#333',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              fontSize: '16px',
-              fontWeight: 'bold',
-              cursor: 'pointer'
-            }}>
+              padding: '0.75rem 1rem',
+              backgroundColor: '#6366f1',
+              border: '1px solid #6366f1',
+              borderRadius: '0.375rem',
+              color: '#ffffff',
+              fontSize: '0.875rem',
+              fontWeight: '500',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }} onMouseEnter={(e) => e.target.style.backgroundColor = '#4f46e5'} onMouseLeave={(e) => e.target.style.backgroundColor = '#6366f1'}>
+              <a href="https://buy.stripe.com/test_aFacN4arj7vM76ua8v5gc00" style={{ color: '#ffffff', textDecoration: 'none' }}>
+                Start Free Trial
+              </a>
+            </button>
+          </div>
+
+          {/* Enterprise Plan */}
+          <div style={{
+            backgroundColor: '#ffffff',
+            border: '1px solid #e5e7eb',
+            borderRadius: '0.75rem',
+            padding: '2rem',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+          }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '600', margin: '0 0 0.5rem', color: '#111827' }}>
+              Enterprise
+            </h2>
+            <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: '0 0 1.5rem' }}>
+              Custom solutions
+            </p>
+
+            <div style={{ margin: '1.5rem 0', paddingBottom: '1.5rem', borderBottom: '1px solid #e5e7eb' }}>
+              <span style={{ fontSize: '2rem', fontWeight: '600', color: '#111827' }}>Custom</span>
+              <span style={{ fontSize: '0.875rem', color: '#6b7280' }}>/pricing</span>
+            </div>
+
+            <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 1.5rem', fontSize: '0.875rem' }}>
+              <li style={{ padding: '0.5rem 0', color: '#374151' }}>✓ Everything in Pro</li>
+              <li style={{ padding: '0.5rem 0', color: '#374151' }}>✓ Dedicated support</li>
+              <li style={{ padding: '0.5rem 0', color: '#374151' }}>✓ Custom integration</li>
+              <li style={{ padding: '0.5rem 0', color: '#374151' }}>✓ SLA guarantee</li>
+              <li style={{ padding: '0.5rem 0', color: '#374151' }}>✓ GitHub Enterprise</li>
+            </ul>
+
+            <button style={{
+              width: '100%',
+              padding: '0.75rem 1rem',
+              backgroundColor: 'transparent',
+              border: '1px solid #d1d5db',
+              borderRadius: '0.375rem',
+              color: '#111827',
+              fontSize: '0.875rem',
+              fontWeight: '500',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }} onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'} onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}>
               Contact Sales
             </button>
           </div>
         </div>
-      </section>
+      </div>
 
       {/* FAQ Section */}
-      <section style={{ 
-        backgroundColor: '#f8f9fa', 
-        padding: '60px 20px'
-      }}>
-        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-          <h2 style={{ fontSize: '32px', textAlign: 'center', marginBottom: '40px', color: '#333' }}>
-            Common Questions
-          </h2>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem 4rem' }}>
+        <h2 style={{ fontSize: '1.875rem', fontWeight: '700', marginBottom: '1rem', color: '#111827', textAlign: 'center' }}>
+          Frequently Asked Questions
+        </h2>
+        <p style={{ fontSize: '1rem', color: '#6b7280', textAlign: 'center', marginBottom: '3rem' }}>
+          Everything you need to know about Code Review Copilot
+        </p>
 
-          <div style={{ marginBottom: '30px' }}>
-            <h3 style={{ color: '#333', fontSize: '18px' }}>Can I try Pro for free?</h3>
-            <p style={{ color: '#666', lineHeight: '1.6' }}>
-              Yes! We offer a 14-day free trial. No credit card required.
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '2rem' }}>
+          
+          {/* FAQ Item 1 */}
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '0.75rem', padding: '1.5rem', border: '1px solid #e5e7eb' }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: '600', margin: '0 0 0.75rem', color: '#111827' }}>
+              How does Code Review Copilot integrate with GitHub?
+            </h3>
+            <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: 0, lineHeight: '1.5' }}>
+              We automatically install as a GitHub App. Once installed, we analyze every PR in seconds with no setup needed. Just push code and get feedback instantly.
             </p>
           </div>
 
-          <div style={{ marginBottom: '30px' }}>
-            <h3 style={{ color: '#333', fontSize: '18px' }}>Can I cancel anytime?</h3>
-            <p style={{ color: '#666', lineHeight: '1.6' }}>
-              Absolutely. Cancel your subscription anytime with no penalties.
+          {/* FAQ Item 2 */}
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '0.75rem', padding: '1.5rem', border: '1px solid #e5e7eb' }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: '600', margin: '0 0 0.75rem', color: '#111827' }}>
+              How much time will this save my team?
+            </h3>
+            <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: 0, lineHeight: '1.5' }}>
+              On average, teams save 3-4 hours per week on code reviews. Instant feedback means faster PRs and fewer back-and-forths with reviewers.
             </p>
           </div>
 
-          <div style={{ marginBottom: '30px' }}>
-            <h3 style={{ color: '#333', fontSize: '18px' }}>What payment methods?</h3>
-            <p style={{ color: '#666', lineHeight: '1.6' }}>
-              We accept all major credit cards via Stripe. Payments are secure and encrypted.
+          {/* FAQ Item 3 */}
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '0.75rem', padding: '1.5rem', border: '1px solid #e5e7eb' }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: '600', margin: '0 0 0.75rem', color: '#111827' }}>
+              What types of issues does it catch?
+            </h3>
+            <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: 0, lineHeight: '1.5' }}>
+              Security vulnerabilities (SQL injection, hardcoded secrets), performance problems (N+1 queries, memory leaks), and code quality issues (error handling, naming, best practices).
             </p>
           </div>
 
-          <div>
-            <h3 style={{ color: '#333', fontSize: '18px' }}>Do you offer refunds?</h3>
-            <p style={{ color: '#666', lineHeight: '1.6' }}>
-              Yes. If unsatisfied in the first 30 days, we'll refund your money.
+          {/* FAQ Item 4 */}
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '0.75rem', padding: '1.5rem', border: '1px solid #e5e7eb' }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: '600', margin: '0 0 0.75rem', color: '#111827' }}>
+              Is my code secure?
+            </h3>
+            <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: 0, lineHeight: '1.5' }}>
+              Yes. We never store code - we analyze it in memory and discard immediately. HTTPS encryption on all data. SOC 2 Type II compliant.
+            </p>
+          </div>
+
+          {/* FAQ Item 5 */}
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '0.75rem', padding: '1.5rem', border: '1px solid #e5e7eb' }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: '600', margin: '0 0 0.75rem', color: '#111827' }}>
+              Can I use it for multiple repositories?
+            </h3>
+            <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: 0, lineHeight: '1.5' }}>
+              Yes! Pro plan covers unlimited repositories and unlimited team members. Perfect for organizations of any size.
+            </p>
+          </div>
+
+          {/* FAQ Item 6 */}
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '0.75rem', padding: '1.5rem', border: '1px solid #e5e7eb' }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: '600', margin: '0 0 0.75rem', color: '#111827' }}>
+              Can I cancel anytime?
+            </h3>
+            <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: 0, lineHeight: '1.5' }}>
+              Absolutely. Cancel your subscription anytime with no penalties. We also offer a 30-day money-back guarantee if you're unsatisfied.
             </p>
           </div>
         </div>
-      </section>
+      </div>
 
       {/* CTA Section */}
-      <section style={{ 
-        backgroundColor: '#007bff', 
-        color: 'white', 
-        padding: '60px 20px',
-        textAlign: 'center'
-      }}>
-        <h2 style={{ fontSize: '32px', marginBottom: '20px' }}>
-          Start Your Free Trial Today
-        </h2>
-        <a href="https://buy.stripe.com/test_aFacN4arj7vM76ua8v5gc00" style={{
-          padding: '15px 40px',
-          fontSize: '18px',
-          backgroundColor: 'white',
-          color: '#007bff',
-          textDecoration: 'none',
-          borderRadius: '5px',
-          fontWeight: 'bold',
-          display: 'inline-block'
-        }}>
-          Get Started
-        </a>
-      </section>
-
-      {/* Footer */}
-      <footer style={{ 
-        backgroundColor: '#333', 
-        color: 'white', 
-        padding: '40px 20px',
-        textAlign: 'center'
-      }}>
-        <p style={{ margin: '0', opacity: 0.8 }}>
-          © 2025 Code Review Copilot
-        </p>
-      </footer>
+      <div style={{ backgroundColor: '#f3f4f6', padding: '3rem 1rem' }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
+          <h2 style={{ fontSize: '1.875rem', fontWeight: '700', margin: '0 0 1rem', color: '#111827' }}>
+            Ready to improve your code quality?
+          </h2>
+          <p style={{ fontSize: '1rem', color: '#6b7280', marginBottom: '2rem' }}>
+            Start your free 14-day trial today. No credit card required.
+          </p>
+          <button style={{
+            padding: '0.875rem 2rem',
+            backgroundColor: '#6366f1',
+            color: '#ffffff',
+            border: 'none',
+            borderRadius: '0.5rem',
+            fontSize: '1rem',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'all 0.2s'
+          }} onMouseEnter={(e) => e.target.style.backgroundColor = '#4f46e5'} onMouseLeave={(e) => e.target.style.backgroundColor = '#6366f1'}>
+            <a href="https://copilot-roan.vercel.app" style={{ color: '#ffffff', textDecoration: 'none' }}>
+              Install on GitHub →
+            </a>
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
