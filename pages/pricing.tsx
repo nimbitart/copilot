@@ -2,9 +2,9 @@ import React from 'react';
 
 export default function Pricing() {
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb' }}>
       {/* Header Section */}
-      <div style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '60px 20px', textAlign: 'center', color: 'white' }}>
+      <div style={{ backgroundColor: '#0066ff', padding: '60px 20px', textAlign: 'center', color: 'white' }}>
         <h1 style={{ fontSize: '48px', fontWeight: 'bold', margin: '0 0 16px', letterSpacing: '-1px' }}>
           Simple, Transparent Pricing
         </h1>
@@ -58,7 +58,7 @@ export default function Pricing() {
               backgroundColor: '#edf2f7',
               border: 'none',
               borderRadius: '6px',
-              color: '#667eea',
+              color: '#0066ff',
               fontSize: '15px',
               fontWeight: '600',
               cursor: 'pointer',
@@ -73,23 +73,23 @@ export default function Pricing() {
             backgroundColor: '#ffffff',
             borderRadius: '12px',
             padding: '40px 30px',
-            boxShadow: '0 30px 80px rgba(102, 126, 234, 0.3)',
-            border: '2px solid #667eea',
+            boxShadow: '0 30px 80px rgba(0, 102, 255, 0.3)',
+            border: '2px solid #0066ff',
             transform: 'scale(1.05)',
             position: 'relative',
             transition: 'transform 0.3s ease, box-shadow 0.3s ease'
           }} onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'scale(1.08)';
-            e.currentTarget.style.boxShadow = '0 40px 100px rgba(102, 126, 234, 0.4)';
+            e.currentTarget.style.boxShadow = '0 40px 100px rgba(0, 102, 255, 0.4)';
           }} onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'scale(1.05)';
-            e.currentTarget.style.boxShadow = '0 30px 80px rgba(102, 126, 234, 0.3)';
+            e.currentTarget.style.boxShadow = '0 30px 80px rgba(0, 102, 255, 0.3)';
           }}>
             <div style={{
               position: 'absolute',
               top: '-15px',
               left: '20px',
-              backgroundColor: '#667eea',
+              backgroundColor: '#0066ff',
               color: '#ffffff',
               padding: '4px 16px',
               borderRadius: '20px',
@@ -103,7 +103,7 @@ export default function Pricing() {
             <p style={{ fontSize: '14px', color: '#718096', margin: '0 0 24px' }}>Best for teams</p>
 
             <div style={{ margin: '30px 0', paddingBottom: '30px', borderBottom: '2px solid #e2e8f0' }}>
-              <span style={{ fontSize: '42px', fontWeight: 'bold', color: '#667eea' }}>$49</span>
+              <span style={{ fontSize: '42px', fontWeight: 'bold', color: '#0066ff' }}>$49</span>
               <span style={{ fontSize: '14px', color: '#718096', marginLeft: '8px' }}>/month</span>
             </div>
 
@@ -118,7 +118,7 @@ export default function Pricing() {
             <button style={{
               width: '100%',
               padding: '12px 24px',
-              backgroundColor: '#667eea',
+              backgroundColor: '#0066ff',
               border: 'none',
               borderRadius: '6px',
               color: '#ffffff',
@@ -126,7 +126,7 @@ export default function Pricing() {
               fontWeight: '600',
               cursor: 'pointer',
               transition: 'background-color 0.3s'
-            }} onMouseEnter={(e) => e.target.style.backgroundColor = '#5568d3'} onMouseLeave={(e) => e.target.style.backgroundColor = '#667eea'}>
+            }} onMouseEnter={(e) => e.target.style.backgroundColor = '#0052cc'} onMouseLeave={(e) => e.target.style.backgroundColor = '#0066ff'}>
               <a href="https://buy.stripe.com/test_aFacN4arj7vM76ua8v5gc00" style={{ color: '#ffffff', textDecoration: 'none' }}>
                 Start Free Trial
               </a>
@@ -170,7 +170,7 @@ export default function Pricing() {
               backgroundColor: '#edf2f7',
               border: 'none',
               borderRadius: '6px',
-              color: '#667eea',
+              color: '#0066ff',
               fontSize: '15px',
               fontWeight: '600',
               cursor: 'pointer',
@@ -269,7 +269,7 @@ export default function Pricing() {
         </p>
         <button style={{
           padding: '12px 32px',
-          backgroundColor: '#667eea',
+          backgroundColor: '#0066ff',
           color: '#ffffff',
           border: 'none',
           borderRadius: '6px',
@@ -277,7 +277,7 @@ export default function Pricing() {
           fontWeight: '600',
           cursor: 'pointer',
           transition: 'background-color 0.3s'
-        }} onMouseEnter={(e) => e.target.style.backgroundColor = '#5568d3'} onMouseLeave={(e) => e.target.style.backgroundColor = '#667eea'}>
+        }} onMouseEnter={(e) => e.target.style.backgroundColor = '#0052cc'} onMouseLeave={(e) => e.target.style.backgroundColor = '#0066ff'}>
           <a href="https://copilot-roan.vercel.app" style={{ color: '#ffffff', textDecoration: 'none' }}>
             Install on GitHub →
           </a>
