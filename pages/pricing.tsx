@@ -52,20 +52,22 @@ export default function Pricing() {
               <li style={{ padding: '12px 0', color: '#cbd5e0', fontSize: '15px' }}>✗ Team collaboration</li>
             </ul>
 
-            <button style={{
-              width: '100%',
-              padding: '12px 24px',
-              backgroundColor: '#edf2f7',
-              border: 'none',
-              borderRadius: '6px',
-              color: '#0066ff',
-              fontSize: '15px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'background-color 0.3s'
-            }} onMouseEnter={(e) => e.target.style.backgroundColor = '#e2e8f0'} onMouseLeave={(e) => e.target.style.backgroundColor = '#edf2f7'}>
-              Get Started
-            </button>
+            <a href="https://github.com/apps/codereviewcopilot" style={{ textDecoration: 'none' }}>
+              <button style={{
+                width: '100%',
+                padding: '12px 24px',
+                backgroundColor: '#edf2f7',
+                border: 'none',
+                borderRadius: '6px',
+                color: '#0066ff',
+                fontSize: '15px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'background-color 0.3s'
+              }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#e2e8f0'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#edf2f7'}>
+                Get Started
+              </button>
+            </a>
           </div>
 
           {/* Pro Plan (Featured) */}
@@ -164,20 +166,22 @@ export default function Pricing() {
               <li style={{ padding: '12px 0', color: '#2d3748', fontSize: '15px' }}>✓ GitHub Enterprise</li>
             </ul>
 
-            <button style={{
-              width: '100%',
-              padding: '12px 24px',
-              backgroundColor: '#edf2f7',
-              border: 'none',
-              borderRadius: '6px',
-              color: '#0066ff',
-              fontSize: '15px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'background-color 0.3s'
-            }} onMouseEnter={(e) => e.target.style.backgroundColor = '#e2e8f0'} onMouseLeave={(e) => e.target.style.backgroundColor = '#edf2f7'}>
-              Contact Sales
-            </button>
+            <a href="mailto:nasr@copilot-roan.vercel.app?subject=Enterprise%20Plan%20Inquiry" style={{ textDecoration: 'none' }}>
+              <button style={{
+                width: '100%',
+                padding: '12px 24px',
+                backgroundColor: '#edf2f7',
+                border: 'none',
+                borderRadius: '6px',
+                color: '#0066ff',
+                fontSize: '15px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'background-color 0.3s'
+              }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#e2e8f0'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#edf2f7'}>
+                Contact Sales
+              </button>
+            </a>
           </div>
         </div>
       </div>
