@@ -1,0 +1,4 @@
+for (let user of users) {
+  const posts = await db.query("SELECT * FROM posts WHERE userId = ?", user.id); // Loop query!
+  user.posts = posts;
+}
